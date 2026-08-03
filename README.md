@@ -32,11 +32,11 @@ The key pain points the system resolves:
 
 ## Screenshots
 
-|                         Landing Page                          |                      Owner Dashboard                      |
-| :-----------------------------------------------------------: | :-------------------------------------------------------: |
-|      ![Landing Page](./frontend/docs/Landing-Pages.png)       |  ![Owner Dashboard](./frontend/docs/Owner-Dashboard.png)  |
-|                    **Employee Dashboard**                     |                   **Member Dashboard**                    |
-| ![Employee Dashboard](./frontend/docs/Employee-Dashboard.png) | ![Member Dashboard](./frontend/docs/Member-Dashboard.png) |
+|                         Landing Page                         |                     Owner Dashboard                      |
+| :----------------------------------------------------------: | :------------------------------------------------------: |
+|      ![Landing Page](./frontend/docs/LandingPages.png)       |  ![Owner Dashboard](./frontend/docs/OwnerDashboard.png)  |
+|                    **Employee Dashboard**                    |                   **Member Dashboard**                   |
+| ![Employee Dashboard](./frontend/docs/EmployeeDashboard.png) | ![Member Dashboard](./frontend/docs/MemberDashboard.png) |
 
 ---
 
@@ -94,19 +94,19 @@ graph TD
 
 ### Backend
 
-| Technology                       | Purpose                                                                          |
-| -------------------------------- | -------------------------------------------------------------------------------- |
-| Laravel 12                       | PHP application framework                                                        |
-| Laravel Sanctum                  | Token-based API authentication                                                   |
-| MySQL                            | Relational database                                                              |
-| Redis                            | Queue driver and cache store                                                     |
-| Laravel Scheduler                | Automated background tasks (voucher disbursement, points expiry, auto check-out) |
-| Laravel Queue                    | Asynchronous job processing (e.g. new member notifications)                      |
-| Laravel Sail                     | Docker-based local development environment                                       |
-| resend/resend-laravel            | Transactional email service (reset password, notifications)                      |
-| maatwebsite/excel                | Export financial reports to .xlsx                                                |
-| simplesoftwareio/simple-qrcode   | Generate member QR code cards                                                    |
-| Pest PHP                         | Feature and unit testing framework                                               |
+| Technology                     | Purpose                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------- |
+| Laravel 12                     | PHP application framework                                                        |
+| Laravel Sanctum                | Token-based API authentication                                                   |
+| MySQL                          | Relational database                                                              |
+| Redis                          | Queue driver and cache store                                                     |
+| Laravel Scheduler              | Automated background tasks (voucher disbursement, points expiry, auto check-out) |
+| Laravel Queue                  | Asynchronous job processing (e.g. new member notifications)                      |
+| Laravel Sail                   | Docker-based local development environment                                       |
+| resend/resend-laravel          | Transactional email service (reset password, notifications)                      |
+| maatwebsite/excel              | Export financial reports to .xlsx                                                |
+| simplesoftwareio/simple-qrcode | Generate member QR code cards                                                    |
+| Pest PHP                       | Feature and unit testing framework                                               |
 
 ---
 
@@ -198,7 +198,7 @@ graph LR
     A["Regular Tier<br/>(0 - 99 Pts)<br/>0% Discount"] -->|"Accumulate Points"| B["Bronze Tier<br/>(100 - 299 Pts)<br/>5% Fish Discount"]
     B -->|"Accumulate Points"| C["Silver Tier<br/>(300 - 599 Pts)<br/>10% Fish Discount"]
     C -->|"Accumulate Points"| D["Gold Tier<br/>(600+ Pts)<br/>15% Fish Discount"]
-    
+
     subgraph Rules ["Loyalty Mechanics"]
         E["1 Point per Rp 10.000 spent"]
         F["Points Expiry: 180 Days Inactivity"]
@@ -215,19 +215,19 @@ flowchart TD
     A[Customer Arrival] --> B{Customer Type?}
     B -- Member --> C[Scan Membership QR Code / Search Name]
     B -- Guest --> D[Check-In as Guest + Deposit Payment]
-    
+
     C --> E[Active Arrival Session Created]
     D --> E
-    
+
     E --> F[Employee Adds Orders: Food, Drinks, Fishing Rod Rental]
     F --> G[Production Status: Pending ➔ Processing ➔ Done]
-    
+
     G --> H[Checkout & Weigh Fish Catch]
     H --> I{Payment Method}
-    
+
     I -- Cash --> J[Process Payment]
     I -- QRIS / Transfer --> K[Upload Payment Proof] --> J
-    
+
     J --> L[Calculate Discounts: Tier % & Vouchers]
     L --> M[Deduct / Refund Guest Deposit]
     M --> N[Award Member Points & Update Tier]
@@ -237,6 +237,7 @@ flowchart TD
 ```
 
 > **Background Jobs & Schedulers:**
+>
 > - When a new member registers, a queue job (`NotifyOwnersOfPendingMember`) immediately notifies all Owner accounts in-app.
 > - The system runs scheduled tasks for **monthly voucher disbursement** and **automatic points expiry** — points are reset after 180 days of customer inactivity, with an in-app warning sent 7 days in advance.
 > - When checkout reduces fish stock below the configured alert threshold, a **real-time low-stock notification** is sent to all Owner and Employee accounts.
@@ -400,26 +401,26 @@ docker run --rm -u "$(id -u):$(id -g)" \
 
 ### Backend (`backend/.env`)
 
-| Variable            | Description                                                     | Example                   |
-| ------------------- | --------------------------------------------------------------- | ------------------------- |
-| `APP_URL`           | Laravel application URL                                         | `http://127.0.0.1:8000`  |
-| `FRONTEND_URL`      | Frontend URL (used for CORS and email links)                    | `http://localhost:5173`  |
-| `APP_PORT`          | Port for Laravel Sail / Docker                                  | `8080`                   |
-| `VITE_PORT`         | Port for Vite dev server inside Sail                            | `5173`                   |
-| `DB_CONNECTION`     | Database driver                                                 | `mysql`                  |
+| Variable            | Description                                                    | Example                  |
+| ------------------- | -------------------------------------------------------------- | ------------------------ |
+| `APP_URL`           | Laravel application URL                                        | `http://127.0.0.1:8000`  |
+| `FRONTEND_URL`      | Frontend URL (used for CORS and email links)                   | `http://localhost:5173`  |
+| `APP_PORT`          | Port for Laravel Sail / Docker                                 | `8080`                   |
+| `VITE_PORT`         | Port for Vite dev server inside Sail                           | `5173`                   |
+| `DB_CONNECTION`     | Database driver                                                | `mysql`                  |
 | `DB_HOST`           | Database host — `127.0.0.1` for local, `mysql` for Sail        | `127.0.0.1`              |
-| `DB_DATABASE`       | Database name                                                   | `pemancingan`            |
-| `DB_USERNAME`       | Database username                                               | `root`                   |
-| `DB_PASSWORD`       | Database password                                               | _(your password)_        |
-| `FORWARD_DB_PORT`   | MySQL port exposed to host when using Sail                      | `3307`                   |
-| `QUEUE_CONNECTION`  | Queue driver — **must be `redis`** for background jobs to work  | `redis`                  |
-| `CACHE_STORE`       | Cache driver                                                    | `redis`                  |
+| `DB_DATABASE`       | Database name                                                  | `pemancingan`            |
+| `DB_USERNAME`       | Database username                                              | `root`                   |
+| `DB_PASSWORD`       | Database password                                              | _(your password)_        |
+| `FORWARD_DB_PORT`   | MySQL port exposed to host when using Sail                     | `3307`                   |
+| `QUEUE_CONNECTION`  | Queue driver — **must be `redis`** for background jobs to work | `redis`                  |
+| `CACHE_STORE`       | Cache driver                                                   | `redis`                  |
 | `REDIS_HOST`        | Redis host — `127.0.0.1` for local, `redis` for Sail           | `127.0.0.1`              |
-| `REDIS_PORT`        | Redis port                                                      | `6379`                   |
-| `RESEND_API_KEY`    | API key for Resend email service                                | `re_xxxxxxxxxxxx`        |
-| `MAIL_MAILER`       | Mail driver                                                     | `resend`                 |
-| `MAIL_FROM_ADDRESS` | Sender email address                                            | `noreply@yourdomain.com` |
-| `OWNER_PASSWORD`    | Password for owner seeder account (required in production)      | _(strong password)_      |
+| `REDIS_PORT`        | Redis port                                                     | `6379`                   |
+| `RESEND_API_KEY`    | API key for Resend email service                               | `re_xxxxxxxxxxxx`        |
+| `MAIL_MAILER`       | Mail driver                                                    | `resend`                 |
+| `MAIL_FROM_ADDRESS` | Sender email address                                           | `noreply@yourdomain.com` |
+| `OWNER_PASSWORD`    | Password for owner seeder account (required in production)     | _(strong password)_      |
 
 > Warning: When running without Docker, set `DB_HOST=127.0.0.1` and `REDIS_HOST=127.0.0.1`. When running with Laravel Sail, set `DB_HOST=mysql` and `REDIS_HOST=redis` (Docker service names).
 
@@ -431,13 +432,13 @@ The backend exposes a RESTful JSON API documented using `.http` files (compatibl
 
 **API Groups:**
 
-| Group             | Description                                                                          |
-| ----------------- | ------------------------------------------------------------------------------------ |
-| **Public**        | Landing page data (leaderboard, events, fish types, special menus)                   |
-| **Auth**          | Login (email or phone), logout, register, forgot password, reset password            |
-| **Notifications** | List notifications, mark as read, unread count (available to all authenticated roles)|
-| **Member**        | Profile, points, vouchers, orders, transaction and arrival history                   |
-| **Employee**      | Check-in, arrivals, pending orders, checkout, receipts, rental items, configs        |
+| Group             | Description                                                                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Public**        | Landing page data (leaderboard, events, fish types, special menus)                                                                        |
+| **Auth**          | Login (email or phone), logout, register, forgot password, reset password                                                                 |
+| **Notifications** | List notifications, mark as read, unread count (available to all authenticated roles)                                                     |
+| **Member**        | Profile, points, vouchers, orders, transaction and arrival history                                                                        |
+| **Employee**      | Check-in, arrivals, pending orders, checkout, receipts, rental items, configs                                                             |
 | **Owner**         | Members, employees, reports (with Excel export), inventory, events, fish stocks, menu management, activity log, QRIS config, guest config |
 
 ---
