@@ -55,23 +55,25 @@ class ArrivalSeeder extends Seeder
             ]);
         }
 
-        // Create historic completed arrivals (distribute to all members so they have transaction history)
+        // Create historic completed arrivals (distribute to recent 7 days so current week dashboard is populated)
         foreach ($memberIds as $index => $mId) {
+            $daysAgo = $index % 7;
             Arrival::create([
                 'member_id' => $mId,
-                'check_in_at' => Carbon::now()->subDays(5 + $index)->setTime(9, 0),
-                'check_out_at' => Carbon::now()->subDays(5 + $index)->setTime(13, 0),
+                'check_in_at' => Carbon::now()->subDays($daysAgo)->setTime(9, 0),
+                'check_out_at' => Carbon::now()->subDays($daysAgo)->setTime(13, 0),
                 'status' => 'completed',
                 'checked_in_by' => $employee->id,
                 'notes' => 'Selesai ' . ($index + 1),
             ]);
             
-            // Give some members a second completed arrival
+            // Give some members a second completed arrival in recent days
             if ($index % 2 == 0) {
-                 Arrival::create([
+                $daysAgo2 = ($daysAgo + 2) % 7;
+                Arrival::create([
                     'member_id' => $mId,
-                    'check_in_at' => Carbon::now()->subDays(20 + $index)->setTime(10, 0),
-                    'check_out_at' => Carbon::now()->subDays(20 + $index)->setTime(14, 0),
+                    'check_in_at' => Carbon::now()->subDays($daysAgo2)->setTime(14, 0),
+                    'check_out_at' => Carbon::now()->subDays($daysAgo2)->setTime(18, 0),
                     'status' => 'completed',
                     'checked_in_by' => $employee->id,
                 ]);

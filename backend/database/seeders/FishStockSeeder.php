@@ -23,11 +23,19 @@ class FishStockSeeder extends Seeder
             'Lele'   => 20,
         ];
 
+        $stocks = [
+            'Patin'  => 85,
+            'Nila'   => 120,
+            'Gurame' => 45,
+            'Bawal'  => 60,
+            'Lele'   => 95,
+        ];
+
         foreach ($fishTypes as $fishType) {
             DB::table('fish_stocks')->updateOrInsert(
                 ['fish_type_id' => $fishType->id],
                 [
-                    'current_stock_kg'   => 0, // Owner akan restock via dashboard
+                    'current_stock_kg'   => $stocks[$fishType->name] ?? 50,
                     'alert_threshold_kg' => $thresholds[$fishType->name] ?? 20,
                     'created_at'         => now(),
                     'updated_at'         => now(),
