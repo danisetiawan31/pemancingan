@@ -73,7 +73,7 @@ function HeroSection() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-col justify-center py-12 lg:py-20"
+            className="flex flex-col justify-center pt-20 pb-12 sm:pt-2 sm:pb-12 lg:py-20"
           >
             {/* Badge */}
             <motion.div
@@ -124,10 +124,10 @@ function HeroSection() {
               >
                 <Button
                   size="lg"
-                  className="gap-2 text-sm sm:text-base"
+                  className="gap-2 text-base sm:text-base whitespace-nowrap"
                   onClick={() => navigate("/register")}
                 >
-                  Daftar Sekarang <ArrowRight className="w-4 h-4" />
+                  Daftar Akun
                 </Button>
               </motion.div>
               <motion.div
@@ -137,10 +137,10 @@ function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="text-sm sm:text-base"
+                  className="text-base sm:text-base whitespace-nowrap"
                   onClick={handleLearnMore}
                 >
-                  Pelajari Lebih Lanjut
+                  Info Detail
                 </Button>
               </motion.div>
             </motion.div>
